@@ -1,5 +1,6 @@
 package com.joao.doit.domain.user;
 
+import com.joao.doit.domain.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -7,9 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +27,9 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private UserRole role;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Task> tasks = new HashSet<>();
 
     public User(RegisterRequestDTO registerRequestDTO) {
         BeanUtils.copyProperties(registerRequestDTO, this);
