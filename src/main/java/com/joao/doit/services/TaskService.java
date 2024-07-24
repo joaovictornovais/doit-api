@@ -3,6 +3,7 @@ package com.joao.doit.services;
 import com.joao.doit.domain.task.Task;
 import com.joao.doit.domain.task.TaskRequestDTO;
 import com.joao.doit.domain.user.User;
+import com.joao.doit.exceptions.EntityNotFoundException;
 import com.joao.doit.repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +50,7 @@ public class TaskService {
     private Task verificateTask(UUID taskId, UserDetails userDetails) {
         User user = userService.findByEmail(userDetails.getUsername());
         Task task = taskRepository.findById(taskId).orElseThrow(
-                () -> new RuntimeException("Tarefa não encontrada")
+                () -> new EntityNotFoundException("Tarefa não encontrada")
         );
         if (task.getUser() != user) throw new RuntimeException("Você não possui permissão para visualizar essa tarefa");
         return task;

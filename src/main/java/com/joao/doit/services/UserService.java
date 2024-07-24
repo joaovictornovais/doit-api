@@ -1,6 +1,8 @@
 package com.joao.doit.services;
 
 import com.joao.doit.domain.user.*;
+import com.joao.doit.exceptions.EntityNotFoundException;
+import com.joao.doit.exceptions.InvalidArgumentException;
 import com.joao.doit.infra.auth.TokenService;
 import com.joao.doit.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ public class UserService {
 
     public TokenResponseDTO register(RegisterRequestDTO data) {
         if (userRepository.findByEmail(data.email()).isPresent())
-            throw new RuntimeException("E-mail já cadastrado");
+            throw new InvalidArgumentException("E-mail já cadastrado");
 
         User user = new User(data);
         user.setPassword(passwordEncoder.encode(data.password()));
@@ -40,12 +42,12 @@ public class UserService {
                 return new TokenResponseDTO(user.get().getFirstName(), token);
             }
         }
-        throw new RuntimeException("Informações incorretas");
+        throw new InvalidArgumentException("Informações incorretas");
     }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado"));
+                () -> new EntityNotFoundException("Usuário não encontrado"));
     }
 
 }

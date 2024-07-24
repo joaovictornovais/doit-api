@@ -1,6 +1,7 @@
 package com.joao.doit.infra.auth;
 
 import com.joao.doit.domain.user.User;
+import com.joao.doit.exceptions.EntityNotFoundException;
 import com.joao.doit.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = returnToken(request);
         if (token != null) {
             User user = userRepository.findByEmail(tokenService.validateToken(token)).orElseThrow(
-                    () -> new RuntimeException("Usuário não encontrado"));
+                    () -> new EntityNotFoundException("Usuário não encontrado"));
             var authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }

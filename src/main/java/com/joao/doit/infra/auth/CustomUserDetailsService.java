@@ -1,6 +1,7 @@
 package com.joao.doit.infra.auth;
 
 import com.joao.doit.domain.user.User;
+import com.joao.doit.exceptions.EntityNotFoundException;
 import com.joao.doit.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado"));
+                () -> new EntityNotFoundException("Usuário não encontrado"));
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), user.getAuthorities()
         );
